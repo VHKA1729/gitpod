@@ -16,23 +16,30 @@ export const pingPong: WsRequestHandler = (ws, req, next) => {
     let pingSentTimer: any;
     const timer = setInterval(() => {
         if (ws.readyState !== ws.OPEN) {
+            log.info("ping interval - not open");
             return;
         }
         // wait 10 secs for a pong
         pingSentTimer = setTimeout(() => {
             // Happens very often, we do not want to spam the logs here
+            log.info("ping sent timeout - terminating");
             ws.terminate();
         }, 10000);
         ws.ping();
+        log.info("ping sent");
     }, 30000)
     ws.on('pong', () => {
+        log.info("received pong");
         if (pingSentTimer) {
             clearTimeout(pingSentTimer);
+            log.info("received pong - cleared timer");
         }
     });
     ws.on('ping', (data) => {
+        log.info("received ping");
         // answer browser-side ping to conform RFC6455 (https://tools.ietf.org/html/rfc6455#section-5.5.2)
         ws.pong(data);
+        log.info("received ping - sent pong");
     });
     ws.on('close', () => {
         clearInterval(timer);
