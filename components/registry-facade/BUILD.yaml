@@ -32,6 +32,7 @@ packages:
       - GOOS=linux
     config:
       packaging: library
+      dontTest: true
   - name: docker
     type: docker
     deps:

@@ -130,6 +130,11 @@ func NewRegistry(cfg config.Config, newResolver ResolverProvider, reg prometheus
 
 	// supervisor layer
 	supervisorRefSource := func(s *api.ImageSpec) (ref string, err error) {
+		if len(s.SupervisorRef) > 0 {
+			log.WithField("supervisor", s.SupervisorRef).Info("adding supervisor layer from api.ImageSpec")
+		} else {
+			log.WithField("supervisor", s.SupervisorRef).Info("there is no supervisor ref in api.ImageSpec")
+		}
 		return s.SupervisorRef, nil
 	}
 	supervisorLayerSource, err := NewSpecMappedImageSource(newResolver, supervisorRefSource)
